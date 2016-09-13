@@ -1,0 +1,19 @@
+<div qv-extension style="height: 100%; position: relative; overflow: auto;">
+	<div style="height: 100%; position: relative;">
+		<!--< div ng-repeat="row in table.rows  track by $index">
+			<div title="{{row.dimensions[0].qText}}: {{row.measures[0].qText}}" class="selectable"
+				ng-class="{'selected':row.dimensions[0].selected}" qva-activate="row.dimensions[0].select()">
+				<div class="label">{{row.dimensions[0].qText}}</div>
+				<div ng-style="{'width' : (row.measures[0].getPercentOfMax() / 1.5) + '%'	}" class="bar">&nbsp;</div>
+				<div style="clear:both"></div>
+			</div>
+		</div> --><p>
+	<label for="amount">Donation amount:</label>
+		<input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+	</p>
+	 
+	<!-- <div id="sliderDiv"> -->
+		<input ng-bind="inputs" type="range" id="slider" value="{{inputs}}" min="0" max="100">
+	<!-- </div> -->
+	</div>
+</div>

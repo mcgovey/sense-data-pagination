@@ -1,0 +1,13 @@
+{
+	"name" : "Data Pagination",
+	"description" : "Extension to allow cycle through data",
+	"icon" : "list",
+	"type" : "visualization",
+	"version" : "1.0.0",
+	"author" : "Kevin McGovern",
+	"homepage" : "https://vizzingmadeeasy.blogspot.com/",
+	"keywords" : "qlik-sense, pagination, timer",
+	"license" : "MIT",
+	"repository" : "",
+    "dependencies" : { "qlik-sense" : ">=2.1.x" }
+}

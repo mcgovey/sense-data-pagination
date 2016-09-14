@@ -4,8 +4,9 @@ define([
 	,"text!./template.html"
 	,"text!./styles.css"
 	,"qlik"
+	,"./lib/d3-timer"
 	],
-function($, qvangular, template, cssContent, qlik) {
+function($, qvangular, template, cssContent, qlik, d3timer) {
 	'use strict';
 // console.log(cssUI);
 	$("<style>").html(cssContent).appendTo("head");
@@ -81,25 +82,51 @@ function($, qvangular, template, cssContent, qlik) {
 		snapshot : {
 			canTakeSnapshot : true
 		},
-		paint: function ( ) {
+		paint: function ( $element, layout ) {
 			//setup scope.table
 			if ( !this.$scope.table ) {
-				this.$scope.table = qlik.table( this );
+				this.$scope.table = layout.qListObject.qDataPages[0].qMatrix; //qlik.table( this );
 			}
 
-			//recalibrate list of values if user changes dim
-			var that = this;
-			this.$scope.$watch("this", function (newVal, oldVal) {
-					// console.log('newVal',newVal);
-					that.$scope.table = qlik.table( newVal );
-			});
+			let valueList = layout.qListObject.qDataPages[0].qMatrix;
 
-			//watch inputs for changes
-			this.$scope.changeInputDelay = function () {
-					console.log(this);
-					// this.$scope.inputs.delay	=	this;
-					// this.backendApi.selectValues(0, [this.row[0].qElemNumber], true);
-			};
+			//recalibrate list of values if user changes dim
+			// var that = this;
+			// this.$scope.$watch("layout", function (newVal, oldVal) {
+			// 		console.log('newVal',newVal);
+			// 		console.log('oldVal',oldVal );
+			// 		// that.$scope.table = qlik.table( newVal );
+			// });
+
+			// get max value of dimensions to know when to restart loop
+
+			// storing this to control variable reference inside of setInterval
+			self = this;
+
+			// initialize timerCount to select the first value
+			let timerCount = 0;
+
+			// create teh setInterval function to loop through values in list
+			let t = setInterval(function() {
+
+				let selected = valueList[timerCount][0];
+
+console.log('timer', timerCount, 'selected', selected);
+
+				if (selected.qText) {
+					let selectedVal = [selected.qElemNumber];
+console.log('selectedVal', selectedVal);
+
+					// self.backendApi.selectValues(0, selectedVal, false);
+				}
+
+
+				timerCount ++;
+				if (timerCount>10) {
+					clearInterval(t)
+				}
+			}, 1000);
+
 
 
 			//get collection of all values in dimension
@@ -112,19 +139,15 @@ function($, qvangular, template, cssContent, qlik) {
 
 			//fix bootstrap overflow
 
-			console.log('scopey!',that.$scope);
-			// console.log('table',that.$scope.table);
+			console.log('scopey!',this.$scope);
 
-			// $( "#slider" ).slider({
-			// 	value:100,
-			// 	min: 0,
-			// 	max: 500,
-			// 	step: 50
-			// 	// ,slide: function( event, ui ) {
-			// 	// 	$( "#amount" ).val( "$" + ui.value );
-			// 	// }
-			// });
-			// $( "#amount" ).val( "$" + $( "#slider" ).slider( "value" ) );
+			//watch inputs for changes
+			this.$scope.changeInputDelay = function () {
+				//I have no idea why but scope is only updated when a ng-change function is defined
+					// console.log(this);
+					// this.$scope.inputs.delay	=	this;
+			};
+
 		},
 		controller : ['$scope',
 		function($scope) {

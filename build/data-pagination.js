@@ -4,9 +4,8 @@ define([
 	,"text!./template.html"
 	,"text!./styles.css"
 	,"qlik"
-	,"./lib/d3-timer"
 	],
-function($, qvangular, template, cssContent, qlik, d3timer) {
+function($, qvangular, template, cssContent, qlik) {
 	'use strict';
 // console.log(cssUI);
 	$("<style>").html(cssContent).appendTo("head");
@@ -111,12 +110,13 @@ function($, qvangular, template, cssContent, qlik, d3timer) {
 
 				let selected = valueList[timerCount][0];
 
-console.log('timer', timerCount, 'selected', selected);
+// console.log('timer', timerCount, 'selected', selected);
 
 				if (selected.qText) {
 					let selectedVal = [selected.qElemNumber];
-console.log('selectedVal', selectedVal);
+// console.log('selectedVal', selectedVal);
 
+					// This selects the next value but is causing the paint function to restart at the moment
 					// self.backendApi.selectValues(0, selectedVal, false);
 				}
 
@@ -133,13 +133,9 @@ console.log('selectedVal', selectedVal);
 
 			// check that sort order is respected
 
-			// select first value
-
-			// using a timer, loop through all value
-
 			//fix bootstrap overflow
 
-			console.log('scopey!',this.$scope);
+	// console.log('scopey!',this.$scope);
 
 			//watch inputs for changes
 			this.$scope.changeInputDelay = function () {

@@ -1,7 +1,7 @@
 define([
 	"jquery"
 	,"qvangular"
-	,"text!./template.html"
+	,"text!./data-pagination.html"
 	,"text!./styles.css"
 	,"qlik"
 	],
@@ -21,55 +21,66 @@ function($, qvangular, template, cssContent, qlik) {
 		// 		}]
 		// 	}
 		// },
-		initialProperties: {
-				qListObjectDef: {
-						qShowAlternatives: true,
-						qFrequencyMode: "V",
-						qInitialDataFetch: [{
-								qWidth: 2,
-								qHeight: 50
-							}]
-				},
-				fixed: true,
-				width: 25,
-				percent: true,
-				selectionMode: "QUICK"
+		// initialProperties: {
+		// 		qListObjectDef: {
+		// 				qShowAlternatives: true,
+		// 				qFrequencyMode: "V",
+		// 				qInitialDataFetch: [{
+		// 						qWidth: 2,
+		// 						qHeight: 50
+		// 					}]
+		// 		},
+		// 		fixed: true,
+		// 		width: 25,
+		// 		percent: true,
+		// 		selectionMode: "QUICK"
+		// },
+		initialProperties : {
+			qHyperCubeDef : {
+				qDimensions : [],
+				qMeasures : [],
+				qInitialDataFetch : [{
+					qWidth : 2,
+					qHeight : 500
+				}]
+			},
+			selectionMode : "QUICK"
 		},
 		definition : {
 			type : "items",
 			component : "accordion",
 			items : {
-				// dimensions : {
-				// 	uses : "dimensions",
-				// 	min : 1,
-				// 	max : 1
-				// },
-				dimensions: {
-											type: "items",
-											translation: "Dimensions",
-											ref: "qListObjectDef",
-											min: 1,
-											max: 1,
-											items: {
-													field: {
-															type: "string",
-															expression: "always",
-															expressionType: "dimension",
-															ref: "qListObjectDef.qDef.qFieldDefs.0",
-															translation: "Field",
-															show: function (data) {
-																	return data.qListObjectDef && !data.qListObjectDef.qLibraryId;
-															}
-													}
-												}
-												//title for dimension
-												//sort order items
+				dimensions : {
+					uses : "dimensions",
+					min : 1
+					,max : 1
 				},
-				// measures : {
-				// 	uses : "measures",
-				// 	min : 1,
-				// 	max : 1
+				// dimensions: {
+				// 							type: "items",
+				// 							translation: "Dimensions",
+				// 							ref: "qListObjectDef",
+				// 							min: 1,
+				// 							max: 1,
+				// 							items: {
+				// 									field: {
+				// 											type: "string",
+				// 											expression: "always",
+				// 											expressionType: "dimension",
+				// 											ref: "qListObjectDef.qDef.qFieldDefs.0",
+				// 											translation: "Field",
+				// 											show: function (data) {
+				// 													return data.qListObjectDef && !data.qListObjectDef.qLibraryId;
+				// 											}
+				// 									}
+				// 								}
+				// 								//title for dimension
+				// 								//sort order items
 				// },
+				measures : {
+					uses : "measures",
+					min : 0,
+					max : 1
+				},
 				sorting : {
 					uses : "sorting"
 				},
@@ -82,12 +93,28 @@ function($, qvangular, template, cssContent, qlik) {
 			canTakeSnapshot : true
 		},
 		paint: function ( $element, layout ) {
+
+
+			let app_this = this,
+				chartID = layout.qInfo.qId;
+
+			// set layout variable to create id used to set the div id
+			app_this.$scope.id= chartID;
+
+// console.log('typeof valueList', typeof app_this.$scope.valueList);
+			//initialize valuelist array
+			app_this.$scope.valueList = !app_this.$scope.valueList ? [] : app_this.$scope.valueList;
+
+
+
 			//setup scope.table
 			if ( !this.$scope.table ) {
-				this.$scope.table = layout.qListObject.qDataPages[0].qMatrix; //qlik.table( this );
+				this.$scope.table = layout.qHyperCube.qDataPages[0].qMatrix; //qlik.table( this );
 			}
 
-			let valueList = layout.qListObject.qDataPages[0].qMatrix;
+
+// console.log('second valueList', typeof valueList);
+// console.log('valueList declaration', app_this.$scope.valueList);
 
 			//recalibrate list of values if user changes dim
 			// var that = this;
@@ -97,35 +124,49 @@ function($, qvangular, template, cssContent, qlik) {
 			// 		// that.$scope.table = qlik.table( newVal );
 			// });
 
+console.log('div search', $element.find('div#timer_' + chartID));
+// 
+			if(layout.qHyperCube.qDataPages[0] && $element.find('div#timer_' + chartID).length>0) {
+				if (app_this.$scope.paint===true) {
+					console.log('pagination already painted');
+				} else {
+					app_this.$scope.valueList = layout.qHyperCube.qDataPages[0].qMatrix;
+					app_this.$scope.paint = true;
+				}
+
+				// runTimer();
+			}
+
+console.log('valueList', app_this.$scope.valueList);
 			// get max value of dimensions to know when to restart loop
 
-			// storing this to control variable reference inside of setInterval
-			self = this;
+// 			// storing this to control variable reference inside of setInterval
+// 			self = this;
 
-			// initialize timerCount to select the first value
-			let timerCount = 0;
+// 			// initialize timerCount to select the first value
+// 			let timerCount = 0;
 
-			// create teh setInterval function to loop through values in list
-			let t = setInterval(function() {
+// 			// create teh setInterval function to loop through values in list
+// 			let t = setInterval(function() {
 
-				let selected = valueList[timerCount][0];
+// 				let selected = valueList[timerCount][0];
 
-// console.log('timer', timerCount, 'selected', selected);
+// // console.log('timer', timerCount, 'selected', selected);
 
-				if (selected.qText) {
-					let selectedVal = [selected.qElemNumber];
-// console.log('selectedVal', selectedVal);
+// 				if (selected.qText) {
+// 					let selectedVal = [selected.qElemNumber];
+// // console.log('selectedVal', selectedVal);
 
-					// This selects the next value but is causing the paint function to restart at the moment
-					// self.backendApi.selectValues(0, selectedVal, false);
-				}
+// 					// This selects the next value but is causing the paint function to restart at the moment
+// 					// self.backendApi.selectValues(0, selectedVal, false);
+// 				}
 
 
-				timerCount ++;
-				if (timerCount>10) {
-					clearInterval(t)
-				}
-			}, 1000);
+// 				timerCount ++;
+// 				if (timerCount>10) {
+// 					clearInterval(t)
+// 				}
+// 			}, 1000);
 
 
 

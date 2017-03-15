@@ -1,0 +1,19 @@
+{
+  "name": "sense-data-pagination",
+  "version": "1.0.0",
+  "description": "Qlik Sense Extension for automatically changing dimensions using D3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mcgovey/sense-data-pagination.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mcgovey/sense-data-pagination/issues"
+  },
+  "homepage": "https://github.com/mcgovey/sense-data-pagination#readme"
+}

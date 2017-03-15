@@ -1,0 +1,27 @@
+<link rel="stylesheet" type="text/css" href="/extensions/data-pagination/lib/scoped-bootstrap.css">
+<div qv-extension ng-attr-id="{{ 'timer_' + id }}" class="bootstrap_inside" style="height: 100%; position: relative; overflow: auto;">
+	<div style="height: 100%; position: relative;">
+
+		<!-- <p>
+	<label for="amount">Donation amount:</label>
+		<input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+	</p> -->
+		<h3 class="text-center">Current Value Goes Here</h3>
+
+		<div id="sliderDiv">
+			<input ng-model="inputs.delay" type="range" id="slider" value="{{delay}}" min="0" max="100" ng-change="changeInputDelay()">
+		</div>
+
+	<!-- <div id="sliderDiv">
+		<p ng-model="inputs" type="range" ng-change="changeInputDelay()">{{inputs.delay}}</p>
+	</div> -->
+		<!-- <p>{{table}}</p> -->
+		<div ng-repeat="row in table track by $index">
+			<!-- <div title="{{row.dimensions[0].qText}}: {{row.measures[0].qText}}"> -->
+				<h4>{{row[0].qText}}</h4>
+				<!-- <div ng-style="{'width' : (row.measures[0].getPercentOfMax() / 1.5) + '%'	}" class="bar">&nbsp;</div>
+				<div style="clear:both"></div> -->
+			<!-- </div> -->
+		</div> 
+	</div>
+</div>

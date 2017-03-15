@@ -1,0 +1,47 @@
+<link rel="stylesheet" href="/extensions/data-pagination/node_modules/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="/extensions/data-pagination/css/scoped-bootstrap.css">
+<div qv-extension ng-attr-id="{{ 'timer_' + id }}" class="bootstrap_inside" style="height: 100%; position: relative; overflow: auto;">
+	<div style="height: 100%; position: relative;">
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-2">
+				<a class="btn btn-default btn-block">
+					<i class="fa fa-step-backward fa-2x" aria-hidden="true"></i>
+				</a>
+			</div>
+
+			<div class="col-xs-2">
+				<a class="btn btn-default btn-block" ng-click="launchInterval()">
+					<i class="fa fa-play fa-2x fa-pull-left" ng-show="!timerVars.running"  aria-hidden="true"></i>
+					<i class="fa fa-pause fa-2x fa-pull-left" ng-show="timerVars.running" aria-hidden="true"></i>
+				</a>
+			</div>
+			<div class="col-xs-6">
+				<h4>Current Value Goes Here</h4>
+			</div>
+			<div class="col-xs-2">
+				<a class="btn btn-default btn-block">
+					<i class="fa fa-step-forward fa-2x" aria-hidden="true"></i>
+				</a>
+			</div>
+		</div>
+	</div>
+
+		<div id="sliderDiv">
+			<input ng-model="inputs.delay" type="range" id="slider" value="{{delay}}" min="0" max="100" ng-change="changeInputDelay()">
+		</div>
+
+	<!-- <div id="sliderDiv">
+		<p ng-model="inputs" type="range" ng-change="changeInputDelay()">{{inputs.delay}}</p>
+	</div> -->
+		<!-- <p>{{table}}</p> -->
+		<div ng-repeat="row in table track by $index">
+			<!-- <div title="{{row.dimensions[0].qText}}: {{row.measures[0].qText}}"> -->
+				<h4>{{row[0].qText}}</h4>
+				<!-- <div ng-style="{'width' : (row.measures[0].getPercentOfMax() / 1.5) + '%'	}" class="bar">&nbsp;</div>
+				<div style="clear:both"></div> -->
+			<!-- </div> -->
+		</div> 
+	</div>
+</div>

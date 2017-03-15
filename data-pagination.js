@@ -9,33 +9,51 @@ function($, qvangular, template, cssContent, qlik) {
 	'use strict';
 // console.log(cssUI);
 	$("<style>").html(cssContent).appendTo("head");
+	function selectValues ( scope, position ) {
 
-	function runTimer( scope ) {
+		/*situations to handle
+			-base case: initial position (0) increment by 1
+			-edge cases
+			-0 to length-1 => increment 1
+			-1 to length => decrement 1
+			-at length => increment 1 so return to 0
+			-at 0 => decrement 1 so go to length
+		*/
+
+		let posOffset = scope.timerVars.currSelectedPos + position,
+			nextSelectedPosShifted = posOffset,//posOffset<0 ? scope.timerVars.valueList.length : (posOffset>scope.timerVars.valueList.length ? 0 : posOffset),
+			selected = scope.timerVars.valueList[nextSelectedPosShifted][0];
+
+		scope.timerVars.currSelectedPos = posOffset;
+console.log('next', scope.timerVars.currSelectedPos, 'position', position, 'stored val', nextSelectedPosShifted, 'total', scope.timerVars.valueList.length);
+
+		scope.timerVars.selectedVal = selected;
+
+// console.log('timer', timerCount, 'selected', selected);
+
+		if (selected.qText) {
+			let selectedVal = [selected.qElemNumber];
+// console.log('selectedVal', selectedVal);
+
+			// This selects the next value
+			scope.backendApi.selectValues(0, selectedVal, false);
+		}
+
+
+		// scope.timerVars.nextSelectedPos = nextSelectedPosShifted + 1;
+		// if (scope.timerVars.nextSelectedPos>scope.timerVars.valueList.length) {
+		// 	scope.timerVars.nextSelectedPos = 0;
+		// }
+	}
+
+	function runTimer ( scope ) {
 		// initialize timerCount to select the first value
 		// let timerCount = 0;
-
-		scope.timerVars.running = true;
 
 		// create teh setInterval function to loop through values in list
 		let t = setInterval(function() {
 
-			let selected = scope.timerVars.valueList[scope.timerVars.selectedPos][0];
-
-// console.log('timer', timerCount, 'selected', selected);
-
-			if (selected.qText) {
-				let selectedVal = [selected.qElemNumber];
-console.log('selectedVal', selectedVal);
-
-				// This selects the next value
-				scope.backendApi.selectValues(0, selectedVal, false);
-			}
-
-
-			scope.timerVars.selectedPos ++;
-			if (scope.timerVars.selectedPos>scope.timerVars.valueList.length) {
-				scope.timerVars.selectedPos = 0;
-			}
+			selectValues( scope, 1 );
 //------------------hard coded to 5 seconds
 		}, 5000);
 
@@ -113,7 +131,7 @@ console.log('selectedVal', selectedVal);
 					app_this.$scope.timerVars.valueList 	= layout.qHyperCube.qDataPages[0].qMatrix;
 
 					//set initial selected position to zero, will be incremented to step back/forward
-					app_this.$scope.timerVars.selectedPos 	= 0;
+					app_this.$scope.timerVars.currSelectedPos 	= 0;
 
 					//run only on initial paint at first
 					//clearInterval(app_this.$scope.timerVars.timerID);
@@ -134,18 +152,31 @@ console.log('timerVars', app_this.$scope.timerVars);
 			app_this.$scope.launchInterval = function () {
 				let scope = this;
 
-console.log('launch this',scope);
+// console.log('launch this',scope);
 				//if timer is running, stop it and switch the flag
 				if (scope.timerVars.running === true) {
 					clearInterval(scope.timerVars.timerID);
 					scope.timerVars.running = false;
 				} else {
 				//if the timer isn't running yet, kick it off and store the value
+					selectValues ( scope, 0 );
 					scope.timerVars.timerID = runTimer( scope );
+					scope.timerVars.running = true;
 				}
 			}
 
+			app_this.$scope.stepPosition = function ( direction ) {
+				let scope = this;
 
+				//if timer is running, stop it and switch the flag
+				if (scope.timerVars.running === true) {
+					clearInterval( scope.timerVars.timerID );
+					scope.timerVars.running = false;
+					selectValues ( scope, direction );
+				} else {
+					selectValues ( scope, direction );
+				}
+			}
 			//get collection of all values in dimension
 
 			// check that sort order is respected
